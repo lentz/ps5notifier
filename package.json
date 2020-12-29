@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Get notified when PS5 comes in stock",
   "main": "index.js",
+  "engines": {
+    "node": "14.x"
+  },
   "dependencies": {
     "@sendgrid/mail": "^7.4.0",
     "dotenv": "^8.2.0",
