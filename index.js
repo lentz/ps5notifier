@@ -12,27 +12,29 @@ async function checkStock(store, url, xpath, page) {
     const inStock = await page.waitForXPath(xpath, { visible: true });
   } catch (err) {
     if (!/Navigation timeout/i.test(err.message)) {
-      console.error(err);
-      console.log('IN STOCK AT', store);
-      const screenshot = await page.screenshot({ encoding: 'base64' });
-      await page.browser().close();
-
-      await sgMail.send({
-        attachments: [{
-          filename: 'screenshot.png',
-          type: 'image/png',
-          content_id: 'screenshot',
-          content: screenshot,
-          disposition: 'inline',
-        }],
-        from: 'PS5 Notifier <noreply@ps5notifier.herokuapp.com>',
-        html: `${url}<br /><br /><img src="cid:screenshot" />`,
-        subject: `PS5 in stock at ${store}`,
-        to: process.env.EMAIL,
-      });
-
-      process.exit();
+      console.log('Navigation timeout');
+      return;
     }
+
+    console.log('IN STOCK AT', store);
+    const screenshot = await page.screenshot({ encoding: 'base64' });
+    await page.browser().close();
+
+    await sgMail.send({
+      attachments: [{
+        filename: 'screenshot.png',
+        type: 'image/png',
+        content_id: 'screenshot',
+        content: screenshot,
+        disposition: 'inline',
+      }],
+      from: 'PS5 Notifier <noreply@ps5notifier.herokuapp.com>',
+      html: `${url}<br /><br /><img src="cid:screenshot" />`,
+      subject: `PS5 in stock at ${store}`,
+      to: process.env.EMAIL,
+    });
+
+    process.exit();
   }
 }
 
