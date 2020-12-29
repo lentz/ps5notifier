@@ -11,9 +11,7 @@ async function checkStock(store, url, xpath, page) {
     await page.goto(url);
     const inStock = await page.waitForXPath(xpath, { visible: true });
   } catch (err) {
-    if (/Navigation timeout/i.test(err.message)) {
-      console.log('Navigation timeout');
-    } else {
+    if (/waiting for XPath/i.test(err.message)) {
       console.log(err.stack);
       console.log('IN STOCK AT', store);
       const screenshot = await page.screenshot({ encoding: 'base64' });
@@ -34,6 +32,8 @@ async function checkStock(store, url, xpath, page) {
       });
 
       process.exit();
+    } else {
+      console.log('Error checking stock:', err);
     }
   }
 }
