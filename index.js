@@ -28,7 +28,7 @@ async function checkStock(store, url, xpath, page) {
         from: 'PS5 Notifier <fantasynotify@mailinator.com>',
         html: `${url}<br /><br /><img src="cid:screenshot" />`,
         subject: `PS5 in stock at ${store}`,
-        to: process.env.EMAIL.split(','),
+        to: process.env.EMAILS.split(','),
       });
 
       process.exit();
