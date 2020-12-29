@@ -3,7 +3,6 @@ const puppeteer = require('puppeteer');
 
 require('dotenv').config();
 
-const timeout = 10000;
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 async function checkStock(store, url, xpath, page) {
@@ -12,19 +11,28 @@ async function checkStock(store, url, xpath, page) {
     await page.goto(url);
     const inStock = await page.waitForXPath(xpath, { visible: true });
   } catch (err) {
-    console.log(err);
-    console.log('IN STOCK AT', store);
-    await page.screenshot({ path: store + '-instock.png' });
-    await page.browser().close();
+    if (!/Navigation timeout/i.test(err.message)) {
+      console.error(err);
+      console.log('IN STOCK AT', store);
+      const screenshot = await page.screenshot({ encoding: 'base64' });
+      await page.browser().close();
 
-    await sgMail.send({
-      to: process.env.EMAIL,
-      from: 'PS5 Notifier <noreply@ps5notifier.herokuapp.com>',
-      subject: `PS5 in stock at ${store}`,
-      html: `${url}`,
-    });
+      await sgMail.send({
+        attachments: [{
+          filename: 'screenshot.png',
+          type: 'image/png',
+          content_id: 'screenshot',
+          content: screenshot,
+          disposition: 'inline',
+        }],
+        from: 'PS5 Notifier <noreply@ps5notifier.herokuapp.com>',
+        html: `${url}<br /><br /><img src="cid:screenshot" />`,
+        subject: `PS5 in stock at ${store}`,
+        to: process.env.EMAIL,
+      });
 
-    process.exit();
+      process.exit();
+    }
   }
 }
 
