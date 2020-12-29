@@ -1,7 +1,7 @@
 {
-  "name": "ps5stock",
+  "name": "ps5notifier",
   "version": "1.0.0",
-  "description": "Find PS5 in stock",
+  "description": "Get notified when PS5 comes in stock",
   "main": "index.js",
   "dependencies": {
     "@sendgrid/mail": "^7.4.0",
