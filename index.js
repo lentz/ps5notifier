@@ -9,7 +9,7 @@ async function checkStock(store, url, xpath, page) {
   try {
     console.log('Checking', store);
     await page.goto(url);
-    const inStock = await page.waitForXPath(xpath, { visible: true });
+    const inStock = await page.waitForXPath(xpath, { timeout: 10000, visible: true });
   } catch (err) {
     if (/waiting for XPath/i.test(err.message)) {
       console.log(err.stack);
@@ -45,32 +45,53 @@ async function checkStock(store, url, xpath, page) {
 
   while(true) {
     await checkStock(
-      'Costco',
+      'Costco Disc',
       'https://www.costco.com/sony-playstation-5-gaming-console-bundle.product.100691489.html',
       '//img[@title="Out of Stock"]',
       page,
     );
 
     await checkStock(
-      'Bestbuy',
+      'Bestbuy Disc',
       'https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149',
       '//button[text() = "Sold Out"]',
       page,
     );
 
     await checkStock(
-      'Target',
+      'Bestbuy Digital',
+      'https://www.bestbuy.com/site/sony-playstation-5-digital-edition-console/6430161.p?skuId=6430161',
+      '//button[text() = "Sold Out"]',
+      page,
+    );
+
+    await checkStock(
+      'Target Disc',
       'https://www.target.com/p/playstation-5-console/-/A-81114595',
       '//div[@data-test="outOfStockNearbyMessage"]',
       page,
     );
 
     await checkStock(
-      'Amazon',
-      'https://www.amazon.com/dp/B08FC5L3RG/ref=olp_product_details/145-5336814-9080741',
+      'Target Digital',
+      'https://www.target.com/p/playstation-5-digital-edition-console/-/A-81114596',
+      '//div[@data-test="outOfStockNearbyMessage"]',
+      page,
+    );
+
+    await checkStock(
+      'Amazon Disc',
+      'https://www.amazon.com/dp/B08FC5L3RG',
       '//div[@id="outOfStock"]',
       page,
     );
+
+    await checkStock(
+      'Amazon Digital',
+      'https://www.amazon.com/dp/B08FC6MR62',
+      '//div[@id="outOfStock"]',
+      page,
+     );
 
     await page.waitForTimeout(30000);
   }
