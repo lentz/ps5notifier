@@ -71,14 +71,14 @@ async function checkStock(store, url, xpath, page) {
     await checkStock(
       'Target Disc',
       'https://www.target.com/p/playstation-5-console/-/A-81114595',
-      '//div[@data-test="outOfStockNearbyMessage"]',
+      '//div[@data-test="notAvailableForShippingMessage"]',
       page,
     );
 
     await checkStock(
       'Target Digital',
       'https://www.target.com/p/playstation-5-digital-edition-console/-/A-81114596',
-      '//div[@data-test="outOfStockNearbyMessage"]',
+      '//div[@data-test="notAvailableForShippingMessage"]',
       page,
     );
 
