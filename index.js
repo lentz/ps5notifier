@@ -85,17 +85,18 @@ async function checkStock(store, url, xpath, page) {
     await checkStock(
       'Amazon Disc',
       'https://www.amazon.com/dp/B08FC5L3RG',
-      '//div[@id="outOfStock"]',
+      '//div[@id="outOfStock" or @id="unqualifiedBuyBox_feature_div"]',
       page,
     );
 
     await checkStock(
       'Amazon Digital',
       'https://www.amazon.com/dp/B08FC6MR62',
-      '//div[@id="outOfStock"]',
+      '//div[@id="outOfStock" or @id="unqualifiedBuyBox_feature_div"]',
       page,
      );
 
+    console.log('Sleeping');
     await page.waitForTimeout(30000);
   }
 })().catch((err) => console.error(err));
