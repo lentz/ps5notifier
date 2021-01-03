@@ -48,12 +48,12 @@ async function checkStock(store, url, xpath, page) {
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36');
 
-    await checkStock(
-      'Costco Disc',
-      'https://www.costco.com/sony-playstation-5-gaming-console-bundle.product.100691489.html',
-      '//img[@title="Out of Stock"]',
-      page,
-    );
+    // await checkStock(
+    //   'Costco Disc',
+    //   'https://www.costco.com/sony-playstation-5-gaming-console-bundle.product.100691489.html',
+    //   '//img[@title="Out of Stock"]',
+    //   page,
+    // );
 
     await checkStock(
       'Bestbuy Disc',
