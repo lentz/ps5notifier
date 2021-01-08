@@ -52,13 +52,13 @@ const stores = [
     delay: 0,
     name: 'GameStop Disc',
     url: 'https://www.gamestop.com/video-games/playstation-5/consoles/products/playstation-5/B225169X.html',
-    xpath: '//button[text() = "Not Available"]',
+    xpath: '//button[text() = "Not Available"] | //h1[text() = "Sorry we could not find the page you were looking for."]',
   },
   {
     delay: 0,
     name: 'GameStop Digital',
     url: 'https://www.gamestop.com/video-games/playstation-5/consoles/products/playstation-5-digital-edition/B225171P.html',
-    xpath: '//button[text() = "Not Available"]',
+    xpath: '//button[text() = "Not Available"] | //h1[text() = "Sorry we could not find the page you were looking for."]',
   },
 ];
 
@@ -80,7 +80,7 @@ const stores = [
           const inStock = await page.waitForXPath(store.xpath, { timeout: 10000, visible: true });
         } catch (err) {
           if (/waiting for XPath/i.test(err.message)) {
-            console.log(err.stack);
+            console.log(err.message);
             console.log('IN STOCK AT', store.name);
             const screenshot = await page.screenshot({ encoding: 'base64' });
 
