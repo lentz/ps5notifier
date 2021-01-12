@@ -28,13 +28,13 @@ const stores = [
     delay: 0,
     name: 'Target Disc',
     url: 'https://www.target.com/p/playstation-5-console/-/A-81114595',
-    xpath: '//div[@data-test="notAvailableForShippingMessage"]',
+    xpath: '//div[@data-test="notAvailableForShippingMessage" or @data-test="soldOutBlock"]',
   },
   {
     delay: 0,
     name: 'Target Digital',
     url: 'https://www.target.com/p/playstation-5-digital-edition-console/-/A-81114596',
-    xpath: '//div[@data-test="notAvailableForShippingMessage"]',
+    xpath: '//div[@data-test="notAvailableForShippingMessage" or @data-test="soldOutBlock"]',
   },
   {
     delay: 0,
