@@ -1,6 +1,8 @@
 const sgMail = require('@sendgrid/mail');
 const puppeteer = require('puppeteer');
 
+const target = require('./target');
+
 require('dotenv').config();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -66,12 +68,15 @@ const stores = [
   const browser = await puppeteer.launch({
     args: ['--no-sandbox'],
     defaultViewport: { width: 1280, height: 800 },
+    headless: true,
   });
 
-  while(true) {
-    const page = await browser.newPage();
-    await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36');
+  const page = await browser.newPage();
+  await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36');
 
+  await target.login(page);
+
+  while(true) {
     for (const store of stores) {
       if (store.delay < Date.now()) {
         try {
@@ -80,9 +85,17 @@ const stores = [
           const inStock = await page.waitForXPath(store.xpath, { timeout: 10000, visible: true });
         } catch (err) {
           if (/waiting for XPath/i.test(err.message)) {
-            console.log(err.message);
             console.log('IN STOCK AT', store.name);
+
             const screenshot = await page.screenshot({ encoding: 'base64' });
+
+            if (/Target/.test(store.name)) {
+              try {
+                await target.buy(page, false);
+              } catch (err) {
+                console.error('Error buying from Target:', err.message);
+              }
+            }
 
             await sgMail.send({
               attachments: [{
@@ -108,6 +121,5 @@ const stores = [
 
     console.log('Sleeping', new Date().toLocaleString());
     await page.waitForTimeout(30000);
-    await page.close();
   }
 })().catch((err) => console.error(err));
