@@ -17,21 +17,9 @@ const stores = [
   // },
   {
     delay: 0,
-    name: 'Bestbuy Disc',
-    url: 'https://www.bestbuy.com/site/sony-playstation-5-console/6426149.p?skuId=6426149',
-    xpath: '//button[text()="Add to Cart"][@data-sku-id="6426149"]',
-  },
-  {
-    delay: 0,
     name: 'Bestbuy Digital',
     url: 'https://www.bestbuy.com/site/sony-playstation-5-digital-edition-console/6430161.p?skuId=6430161',
     xpath: '//button[text()="Add to Cart"][@data-sku-id="6430161"]',
-  },
-  {
-    delay: 0,
-    name: 'Target Disc',
-    url: 'https://www.target.com/p/playstation-5-console/-/A-81114595',
-    xpath: '//button[text()="Pick it up" or text()="Ship it"]',
   },
   {
     delay: 0,
@@ -41,27 +29,21 @@ const stores = [
   },
   {
     delay: 0,
-    name: 'Amazon Disc',
-    url: 'https://www.amazon.com/dp/B08FC5L3RG',
-    xpath: '//input[@value="Add to Cart"]',
-  },
-  {
-    delay: 0,
     name: 'Amazon Digital',
     url: 'https://www.amazon.com/dp/B08FC6MR62',
     xpath: '//input[@value="Add to Cart"]',
   },
   {
     delay: 0,
-    name: 'GameStop Disc',
-    url: 'https://www.gamestop.com/video-games/playstation-5/consoles/products/playstation-5/B225169X.html',
+    name: 'GameStop Digital',
+    url: 'https://www.gamestop.com/video-games/playstation-5/consoles/products/playstation-5-digital-edition/11108141.html?condition=New',
     xpath: '//button[text()="Add to Cart"]',
   },
   {
     delay: 0,
-    name: 'GameStop Digital',
-    url: 'https://www.gamestop.com/video-games/playstation-5/consoles/products/playstation-5-digital-edition/B225171P.html',
-    xpath: '//button[text()="Add to Cart"]',
+    name: 'Newegg Digital',
+    url: 'https://www.newegg.com/p/N82E16868110295',
+    xpath: '//div[@id="ProductBuy"]//button[text()="Add to cart "]',
   },
 ];
 
@@ -82,7 +64,7 @@ const stores = [
     for (const store of stores) {
       if (store.delay < Date.now()) {
         try {
-          console.log('Checking', store.name);
+          console.log(new Date().toLocaleString(), 'Checking', store.name);
           await page.goto(store.url, { waitUntil: 'domcontentloaded' });
           const inStock = await page.waitForXPath(store.xpath, { timeout: 10000, visible: true });
 
@@ -120,8 +102,5 @@ const stores = [
         }
       }
     }
-
-    console.log('Sleeping', new Date().toLocaleString());
-    await page.waitForTimeout(30000);
   }
 })().catch((err) => console.error(err));
