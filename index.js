@@ -50,7 +50,7 @@ const stores = [
 (async () => {
   const browser = await puppeteer.launch({
     args: ['--no-sandbox'],
-    defaultViewport: { width: 1280, height: 800 },
+    defaultViewport: { width: 1280, height: 1280 },
     headless: false,
   });
 
