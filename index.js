@@ -9,41 +9,53 @@ require('dotenv').config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const stores = [
-  // {
-  //   delay: 0,
-  //   name: 'Costco Disc',
-  //   url: 'https://www.costco.com/sony-playstation-5-gaming-console-bundle.product.100691489.html',
-  //   xpath: '//img[@title="Out of Stock"]',
-  // },
   {
+    active: false,
     delay: 0,
+    inStockXPath: '//img[@title="Out of Stock"]',
+    loadedXPath: '//div',
+    name: 'Costco Disc',
+    url: 'https://www.costco.com/sony-playstation-5-gaming-console-bundle.product.100691489.html',
+  },
+  {
+    active: true,
+    delay: 0,
+    inStockXPath: '//button[text()="Add to Cart"][@data-sku-id="6430161"]',
+    loadedXPath: '//h1[text() = "Sony - PlayStation 5 Digital Edition Console"]',
     name: 'Bestbuy Digital',
     url: 'https://www.bestbuy.com/site/sony-playstation-5-digital-edition-console/6430161.p?skuId=6430161',
-    xpath: '//button[text()="Add to Cart"][@data-sku-id="6430161"]',
   },
   {
+    active: true,
     delay: 0,
+    inStockXPath: '//button[text()="Pick it up" or text()="Ship it"]',
+    loadedXPath: '//span[text() = "PlayStation 5 Digital Edition Console"]',
     name: 'Target Digital',
     url: 'https://www.target.com/p/playstation-5-digital-edition-console/-/A-81114596',
-    xpath: '//button[text()="Pick it up" or text()="Ship it"]',
   },
   {
+    active: true,
     delay: 0,
+    inStockXPath: '//input[@value="Add to Cart"]',
+    loadedXPath: '//span[contains(text(), "PlayStation 5 Digital Edition")]',
     name: 'Amazon Digital',
     url: 'https://www.amazon.com/dp/B08FC6MR62',
-    xpath: '//input[@value="Add to Cart"]',
   },
   {
+    active: false,
     delay: 0,
+    inStockXPath: '//button[text()="Add to Cart"]',
+    loadedXPath: '//div',
     name: 'GameStop Digital',
     url: 'https://www.gamestop.com/video-games/playstation-5/consoles/products/playstation-5-digital-edition/11108141.html?condition=New',
-    xpath: '//button[text()="Add to Cart"]',
   },
   {
+    active: true,
     delay: 0,
+    inStockXPath: '//div[@id="ProductBuy"]//button[text()="Add to cart "]',
+    loadedXPath: '//h1[contains(text(), "PS5 Bundle")]',
     name: 'Newegg Digital',
     url: 'https://www.newegg.com/p/N82E16868110295',
-    xpath: '//div[@id="ProductBuy"]//button[text()="Add to cart "]',
   },
 ];
 
@@ -57,16 +69,34 @@ const stores = [
   const page = await browser.newPage();
   await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36');
 
-  // await costco.login(page);
   await target.login(page);
 
   while(true) {
     for (const store of stores) {
-      if (store.delay < Date.now()) {
+      if (store.active && store.delay < Date.now()) {
         try {
           console.log(new Date().toLocaleString(), 'Checking', store.name);
           await page.goto(store.url, { waitUntil: 'domcontentloaded' });
-          const inStock = await page.waitForXPath(store.xpath, { timeout: 10000, visible: true });
+          try {
+            await page.waitForXPath(store.loadedXPath, { timeout: 10000, visible: true });
+          } catch (err) {
+            console.log('PAGE LOAD FAILED FOR', store.name);
+            const screenshot = await page.screenshot({ encoding: 'base64' });
+            await sgMail.send({
+              attachments: [{
+                filename: 'screenshot.png',
+                type: 'image/png',
+                content_id: 'screenshot',
+                content: screenshot,
+                disposition: 'inline',
+              }],
+              from: 'PS5 Notifier <fantasynotify@mailinator.com>',
+              html: `${store.url}<br /><br /><img src="cid:screenshot" />`,
+              subject: `Page load failed for ${store.name}`,
+              to: process.env.ADMIN_EMAIL,
+            });
+          }
+          const inStock = await page.waitForXPath(store.inStockXPath, { timeout: 10000, visible: true });
 
           console.log('IN STOCK AT', store.name);
 
