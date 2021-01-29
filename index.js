@@ -10,6 +10,14 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const stores = [
   {
+    active: true,
+    delay: 0,
+    inStockXPath: '//input[@value="Add to Cart"]',
+    loadedXPath: '//span[contains(text(), "PlayStation 5 Digital Edition")]',
+    name: 'Amazon Digital',
+    url: 'https://www.amazon.com/dp/B08FC6MR62',
+  },
+  {
     active: false,
     delay: 0,
     inStockXPath: '//img[@title="Out of Stock"]',
@@ -32,14 +40,6 @@ const stores = [
     loadedXPath: '//span[text() = "PlayStation 5 Digital Edition Console"]',
     name: 'Target Digital',
     url: 'https://www.target.com/p/playstation-5-digital-edition-console/-/A-81114596',
-  },
-  {
-    active: true,
-    delay: 0,
-    inStockXPath: '//input[@value="Add to Cart"]',
-    loadedXPath: '//span[contains(text(), "PlayStation 5 Digital Edition")]',
-    name: 'Amazon Digital',
-    url: 'https://www.amazon.com/dp/B08FC6MR62',
   },
   {
     active: false,
@@ -95,6 +95,8 @@ const stores = [
               subject: `Page load failed for ${store.name}`,
               to: process.env.ADMIN_EMAIL,
             });
+            store.delay = Date.now() + (1000 * 60 * 60);
+            continue;
           }
           const inStock = await page.waitForXPath(store.inStockXPath, { timeout: 10000, visible: true });
 
