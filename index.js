@@ -8,6 +8,9 @@ require('dotenv').config();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+const ONE_HOUR_IN_MS = 1000 * 60 * 60;
+let adminNotifyDelay = 0;
+
 const stores = [
   {
     active: true,
@@ -81,21 +84,23 @@ const stores = [
             await page.waitForXPath(store.loadedXPath, { timeout: 10000, visible: true });
           } catch (err) {
             console.log('PAGE LOAD FAILED FOR', store.name);
-            const screenshot = await page.screenshot({ encoding: 'base64' });
-            await sgMail.send({
-              attachments: [{
-                filename: 'screenshot.png',
-                type: 'image/png',
-                content_id: 'screenshot',
-                content: screenshot,
-                disposition: 'inline',
-              }],
-              from: 'PS5 Notifier <fantasynotify@mailinator.com>',
-              html: `${store.url}<br /><br /><img src="cid:screenshot" />`,
-              subject: `Page load failed for ${store.name}`,
-              to: process.env.ADMIN_EMAIL,
-            });
-            store.delay = Date.now() + (1000 * 60 * 60);
+            if (adminNotifyDelay < Date.now()) {
+              const screenshot = await page.screenshot({ encoding: 'base64' });
+              await sgMail.send({
+                attachments: [{
+                  filename: 'screenshot.png',
+                  type: 'image/png',
+                  content_id: 'screenshot',
+                  content: screenshot,
+                  disposition: 'inline',
+                }],
+                from: 'PS5 Notifier <fantasynotify@mailinator.com>',
+                html: `${store.url}<br /><br /><img src="cid:screenshot" />`,
+                subject: `Page load failed for ${store.name}`,
+                to: process.env.ADMIN_EMAIL,
+              });
+              adminNotifyDelay = Date.now() + ONE_HOUR_IN_MS;
+            }
             continue;
           }
           const inStock = await page.waitForXPath(store.inStockXPath, { timeout: 10000, visible: true });
@@ -126,7 +131,7 @@ const stores = [
             to: process.env.EMAILS.split(','),
           });
 
-          store.delay = Date.now() + (1000 * 60 * 60);
+          store.delay = Date.now() + ONE_HOUR_IN_MS;
         } catch (err) {
           if (!/waiting for XPath/i.test(err.message)) {
             console.log('Error checking stock:', err);
