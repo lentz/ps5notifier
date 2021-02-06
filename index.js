@@ -13,7 +13,7 @@ let adminNotifyDelay = 0;
 
 const stores = [
   {
-    active: true,
+    active: false,
     delay: 0,
     inStockXPath: '//span[text() = "Add to cart"]',
     loadedXPath: '//h1[text() = "Sony PlayStation 5, Digital Edition"]',
@@ -21,7 +21,7 @@ const stores = [
     url: 'https://www.walmart.com/ip/Sony-PlayStation-5-Digital-Edition/493824815',
   },
   {
-    active: true,
+    active: false,
     delay: 0,
     inStockXPath: '//input[@value="Add to Cart"]',
     loadedXPath: '//span[contains(text(), "PlayStation 5 Digital Edition")]',
