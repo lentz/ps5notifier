@@ -77,12 +77,12 @@ const stores = [
     headless: false,
   });
 
-  const page = await browser.newPage();
-  await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36');
-
-  await target.login(page);
+  await target.login(browser);
 
   while(true) {
+    const page = await browser.newPage();
+    await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36');
+
     for (const store of stores) {
       if (store.active && store.delay < Date.now()) {
         try {
@@ -147,5 +147,7 @@ const stores = [
         }
       }
     }
+
+    await page.close();
   }
 })().catch((err) => console.error(err));
