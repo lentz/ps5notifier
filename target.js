@@ -23,8 +23,10 @@ async function buy(page, forPat) {
   const shipItButton = await page.waitForXPath('//button[@data-test="shipItButton"]');
   await shipItButton.click();
 
-  const declineCoverage = await page.waitForXPath('//button[@data-test="espModalContent-declineCoverageButton"]');
-  await declineCoverage.click();
+  const declineCoverage = await page.$x('//button[@data-test="espModalContent-declineCoverageButton"]');
+  if (declineCoverage && declineCoverage.length) {
+    await declineCoverage[0].click();
+  }
 
   const checkoutBtn = await page.waitForXPath('//button[@data-test="addToCartModalViewCartCheckout"]');
   await checkoutBtn.click();

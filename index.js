@@ -122,6 +122,7 @@ const stores = [
               await target.buy(page, false);
             } catch (err) {
               console.error('Error buying from Target:', err.message);
+              await page.screenshot({ path: 'target-purchase-error.png' });
             }
           }
 
